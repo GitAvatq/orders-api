@@ -9,6 +9,6 @@ const route = (0, express_1.Router)();
 route.get("/get", orders_controllers_1.default.getProductsAsync);
 route.post("/create", orders_controllers_1.default.createProductAsync);
 route.delete("/delete/:id", orders_controllers_1.default.deleteProductAsync);
-// route.put("/update/:id")
+route.put("/update/:id", orders_controllers_1.default.modifyProductAsync);
 exports.default = route;
 //# sourceMappingURL=orders.routes.js.map

@@ -45,9 +45,9 @@ const createProductAsync = async (req, res) => {
         });
     }
     catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            message: !error ? "" : error,
+            message: error?.message || "Internal server error",
         });
         console.error(error);
     }
@@ -55,16 +55,19 @@ const createProductAsync = async (req, res) => {
 const deleteProductAsync = async (req, res) => {
     try {
         const { id } = req.params;
-        const data = prisma_1.prisma.product.findMany();
+        const productId = String(id);
         const productExists = await prisma_1.prisma.product.findUnique({
-            where: { id: String(id) },
-        });
-        const deletedProduct = await prisma_1.prisma.product.delete({
-            where: { id: String(id) },
+            where: { id: productId },
         });
         if (!productExists) {
-            throw new Error("This product doesnt exist!");
+            return res.status(404).json({
+                success: false,
+                message: "Product does not exists!",
+            });
         }
+        const deletedProduct = await prisma_1.prisma.product.delete({
+            where: { id: productId },
+        });
         res.status(200).json({
             success: true,
             message: "Product deleted Successfully",
@@ -74,7 +77,7 @@ const deleteProductAsync = async (req, res) => {
     catch (error) {
         res.status(500).json({
             success: false,
-            message: !error ? "" : error,
+            message: error?.message || "Internal server error",
         });
         console.error(error);
     }
@@ -83,14 +86,56 @@ const modifyProductAsync = async (req, res) => {
     try {
         const { id } = req.params;
         const { name } = req.body;
+        const productId = String(id);
+        if (!name || typeof name !== "string") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid product name",
+            });
+        }
+        const productExists = await prisma_1.prisma.product.findUnique({
+            where: { id: productId },
+        });
+        if (!productExists) {
+            return res.status(404).json({
+                success: false,
+                message: "Product does not exist!",
+            });
+        }
+        const duplicate = await prisma_1.prisma.product.findFirst({
+            where: {
+                name,
+                NOT: { id: productId },
+            },
+        });
+        if (duplicate) {
+            return res.status(400).json({
+                success: false,
+                message: "Product with this name already exists!",
+            });
+        }
+        const updateProduct = await prisma_1.prisma.product.update({
+            where: { id: productId },
+            data: { name },
+        });
+        res.status(200).json({
+            success: true,
+            message: "Success update",
+            data: updateProduct,
+        });
     }
     catch (error) {
         res.status(500).json({
             success: false,
-            message: !error ? "" : error,
+            message: error?.message || "Internal server error",
         });
         console.error(error);
     }
 };
-exports.default = { getProductsAsync, createProductAsync, deleteProductAsync };
+exports.default = {
+    getProductsAsync,
+    createProductAsync,
+    deleteProductAsync,
+    modifyProductAsync,
+};
 //# sourceMappingURL=orders.controllers.js.map
