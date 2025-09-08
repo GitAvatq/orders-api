@@ -6,6 +6,6 @@ const route = Router();
 route.get("/get", ordersControllers.getProductsAsync);
 route.post("/create", ordersControllers.createProductAsync);
 route.delete("/delete/:id", ordersControllers.deleteProductAsync);
-// route.put("/update/:id")
+route.put("/update/:id", ordersControllers.modifyProductAsync);
 
 export default route;
