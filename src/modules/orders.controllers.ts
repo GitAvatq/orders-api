@@ -21,23 +21,22 @@ const getProductsAsync = async (req: Request, res: Response) => {
 
 const createProductAsync = async (req: Request, res: Response) => {
   try {
-    const { name, price, img, id } = req.body;
+    const { name, price, img, id, quantity } = req.body;
     if (!name) {
       throw new Error("Name is required!");
     } else if (!price) {
       throw new Error("Price is required!");
     } else if (!img) {
       throw new Error("Img src is required!");
+    }else if (!quantity) => {
+      throw new Error("Img src is required!");
     }
     const newProduct = {
       img,
       name,
       price,
+      quantity,
     };
-
-    const doesExists = await prisma.product.findUnique({
-      where: { id: String(id) },
-    });
 
     const createdProduct = await prisma.product.create({
       data: newProduct,
@@ -91,10 +90,15 @@ const deleteProductAsync = async (req: Request, res: Response) => {
 const modifyProductAsync = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, quantity } = req.body;
     const productId = String(id);
 
-    if (!name || typeof name !== "string") {
+    if (
+      !name ||
+      typeof name !== "string" ||
+      !quantity ||
+      typeof quantity !== "number"
+    ) {
       return res.status(400).json({
         success: false,
         message: "Invalid product name",
@@ -126,7 +130,7 @@ const modifyProductAsync = async (req: Request, res: Response) => {
     }
     const updateProduct = await prisma.product.update({
       where: { id: productId },
-      data: { name },
+      data: { name, quantity },
     });
 
     res.status(200).json({

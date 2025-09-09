@@ -12,6 +12,7 @@ model Product {
   img       String   @unique
   name      String   @unique
   price     Int      @unique
+  quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
