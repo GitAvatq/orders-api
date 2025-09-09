@@ -28,7 +28,7 @@ const createProductAsync = async (req: Request, res: Response) => {
       throw new Error("Price is required!");
     } else if (!img) {
       throw new Error("Img src is required!");
-    }else if (!quantity) => {
+    } else if (!quantity) {
       throw new Error("Img src is required!");
     }
     const newProduct = {
