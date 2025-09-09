@@ -21,7 +21,7 @@ const getProductsAsync = async (req: Request, res: Response) => {
 
 const createProductAsync = async (req: Request, res: Response) => {
   try {
-    const { name, price, img } = req.body;
+    const { name, price, img, id } = req.body;
     if (!name) {
       throw new Error("Name is required!");
     } else if (!price) {
@@ -34,6 +34,10 @@ const createProductAsync = async (req: Request, res: Response) => {
       name,
       price,
     };
+
+    const doesExists = await prisma.product.findUnique({
+      where: { id: String(id) },
+    });
 
     const createdProduct = await prisma.product.create({
       data: newProduct,
