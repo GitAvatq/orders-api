@@ -19,6 +19,33 @@ const getProductsAsync = async (req: Request, res: Response) => {
   }
 };
 
+const getDetailsAsync = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const productId = String(id);
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
 const createProductAsync = async (req: Request, res: Response) => {
   try {
     const { name, price, img, id, quantity } = req.body;
@@ -152,4 +179,5 @@ export default {
   createProductAsync,
   deleteProductAsync,
   modifyProductAsync,
+  getDetailsAsync,
 };

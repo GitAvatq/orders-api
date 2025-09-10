@@ -30,6 +30,9 @@ const createProductAsync = async (req, res) => {
         else if (!img) {
             throw new Error("Img src is required!");
         }
+        else if (!quantity) {
+            throw new Error("Img src is required!");
+        }
         const newProduct = {
             img,
             name,
